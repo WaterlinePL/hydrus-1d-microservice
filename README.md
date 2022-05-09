@@ -1,3 +1,3 @@
-# Hydrus 1D as a microservice
+# Simulation launcher microservice
 
-This is a repository of microservice delivering Hydrus 1D features.
+This is a repository of a microservice delivering coordinating launching Modflow and Hydrus-1D simulations as Kubernetes Jobs.
