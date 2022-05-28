@@ -1,10 +1,9 @@
 import os
-from typing import Dict, Tuple
+from typing import Dict
 
-from job_generator.yaml_data import YamlData
+from src.job_generator.yaml_data import YamlData
 
 YamlManifest = Dict[str, str]
-Namespace = str
 
 
 class YamlJobGenerator:
@@ -15,7 +14,7 @@ class YamlJobGenerator:
     BACKOFF_LIMIT = 2
 
     @staticmethod
-    def prepare_kubernetes_job(data: YamlData) -> Tuple[YamlManifest, Namespace]:
+    def prepare_kubernetes_job(data: YamlData) -> YamlManifest:
         containers = [{
             'image': data.container_image,
             'name': data.container_name,
@@ -58,4 +57,4 @@ class YamlJobGenerator:
             }
         }
 
-        return config, data.namespace
+        return config

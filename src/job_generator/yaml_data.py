@@ -20,7 +20,6 @@ class YamlData:
 
     def __init__(self, project_name: str, model_name: str, model_type: HydrologicalModelEnum):
         self.job_name = YamlData._create_job_name(model_name)
-        self.namespace = str(model_type)
         self.container_image = YamlData._select_docker_image(model_type)
         self.container_name = YamlData._create_container_name(project_name, model_name)
         self.mount_path = YamlData._get_mount_path(model_type)
