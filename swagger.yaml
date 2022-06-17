@@ -1,0 +1,199 @@
+swagger: "2.0"
+info:
+  description: "Basic version of simulation job management microservice API"
+  version: "0.1"
+  title: "Simulation job management microservice"
+host: "TBD"
+basePath: "/TBD"
+tags:
+- name: "project-files"
+  description: "Launch jobs manipulating project files"
+  externalDocs:
+    description: "Endpoint usage order"
+    url: "http://github.com/WaterlinePL/simulation-job-management-microservice"
+- name: "simulation"
+  description: "Launch simulation jobs"
+  externalDocs:
+    description: "Endpoint usage order"
+    url: "http://github.com/WaterlinePL/simulation-job-management-microservice"
+- name: "status"
+  description: "Access jobs statuses"
+  externalDocs:
+    description: "Endpoint usage order"
+    url: "http://github.com/WaterlinePL/simulation-job-management-microservice"
+schemes:
+# - "https"
+- "http"
+paths:
+  /project-files:
+    post:
+      tags:
+      - "project-files"
+      summary: "Launch job downloading necessery files for simulation to temporary volume from MinIO"
+      description: "Assumes that there is a .json and mask files with same name the same as project with all necessery information on MinIO"
+      operationId: "createProjectFiles"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Project ID"
+        required: true
+        schema:
+          $ref: "#/definitions/ProjectId"
+      responses:
+        "200":
+          description: "Job successfully started"
+          schema:
+            $ref: "#/definitions/JobId"
+        "404":
+          description: "Project not found"
+  /project-files/{projectId}:
+    delete:
+      tags:
+      - "project-files"
+      summary: "Delete project files from temporary volume and upload them to MinIO output bucket"
+      description: "Uploads to MinIO output models specified in project .json file and them delete data from temporary volume"
+      operationId: "deleteProjectFiles"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "projectId"
+        description: "Project ID"
+        type: "string"
+        required: true
+      responses:
+        "200":
+          description: "Job successfully started"
+          schema:
+            $ref: "#/definitions/JobId"
+        "404":
+          description: "Project not found"
+  /simulation/hydrus:
+    post:
+      tags:
+      - "simulation"
+      summary: "Start Hydrus simulation"
+      description: "Launch Hydrus simulation for given model in project"
+      operationId: "launchHydrus"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Hydrus input"
+        required: true
+        schema:
+          $ref: "#/definitions/ModelDetails"
+      responses:
+        "200":
+          description: "Job successfully started"
+          schema:
+            $ref: "#/definitions/JobId"
+        "404":
+          description: "Project or Hydrus model not found"
+  /simulation/modflow:
+    post:
+      tags:
+      - "simulation"
+      summary: "Start Modflow simulation"
+      description: "Launch Modflow simulation for given model in project"
+      operationId: "launchModflow"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "body"
+        name: "body"
+        description: "Modflow input"
+        required: true
+        schema:
+          $ref: "#/definitions/ModelDetails"
+      responses:
+        "200":
+          description: "Job successfully started"
+          schema:
+            $ref: "#/definitions/JobId"
+        "404":
+          description: "Project or Modflow model not found"
+  /status/{jobId}:
+    get:
+      tags:
+      - "status"
+      summary: "Get status of a job"
+      description: "Get status of any job previously started"
+      operationId: "jobStatus"
+      consumes:
+      - "application/json"
+      produces:
+      - "application/json"
+      parameters:
+      - in: "path"
+        name: "jobId"
+        description: "Job ID"
+        required: true
+        type: string
+      responses:
+        "200":
+          description: "Job successfully started"
+          schema:
+            $ref: "#/definitions/JobStatus"
+        "404":
+          description: "Job not found"
+# securityDefinitions:
+#   petstore_auth:
+#     type: "oauth2"
+#     authorizationUrl: "http://petstore.swagger.io/oauth/dialog"
+#     flow: "implicit"
+#     scopes:
+#       write:pets: "modify pets in your account"
+#       read:pets: "read your pets"
+#   api_key:
+#     type: "apiKey"
+#     name: "api_key"
+#     in: "header"
+definitions:
+  ProjectId:
+    type: "object"
+    properties:
+      projectId: 
+        type: "string"
+        description: "ID of a simulation project"
+        example: "vytxeTZskVKR7C7WgdSP3d"
+  JobId:
+    type: "object"
+    properties:
+      jobId:
+        type: "string"
+        description: "ID of a freshly started job"
+        example: "MLpZDiEXM4VsUryR9oE8uc"
+  ModelDetails:
+    type: "object"
+    properties:
+      projectId: 
+        type: "string"
+        description: "ID of a simulation project"
+        example: "vytxeTZskVKR7C7WgdSP3d"
+      modelName:
+        type: "string"
+        description: "Name of hydrological model"
+        example: "exu3DTbj2ncsn9tLdLWspw"
+  JobStatus:
+    type: "string"
+    description: "Job status"
+    enum:
+    - "pending"
+    - "running"
+    - "success"
+    - "failed"
+externalDocs:
+  description: "Find out more about Swagger"
+  url: "http://swagger.io"

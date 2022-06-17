@@ -24,21 +24,21 @@ def manage_project_files():
         return kubernetes_job_operator.create_file_removal_job(project_name)
 
 
-@app.route("/jobs/hydrus", methods=[RestMethod.POST])
+@app.route("/simulation/hydrus", methods=[RestMethod.POST])
 def launch_hydrus():
     project_name = request.json["project_name"]
     model = request.json["model"]
     return kubernetes_job_operator.create_hydrus_job(project_name, model)
 
 
-@app.route("/jobs/modflow", methods=[RestMethod.POST])
+@app.route("/simulation/modflow", methods=[RestMethod.POST])
 def launch_modflow():
     project_name = request.json["project_name"]
     model = request.json["model"]
     return kubernetes_job_operator.create_modflow_job(project_name, model)
 
 
-@app.route("/jobs/<job_id>", methods=[RestMethod.GET])
+@app.route("/status/<job_id>", methods=[RestMethod.GET])
 def get_simulation_job_status(job_id: str):
     return redis_operator.get_job_status(job_id)
 
