@@ -8,13 +8,35 @@ This is a repository of a microservice that launches Kubernetes Jobs related to 
 
 
 ## API 
-Preferably body of requests should be a JSON.
+Preferably body of requests should be a JSON. Responses are in JSON.
 
 1. **POST** `/project-files`  
+Request:
+```json
+{
+  "projectId": "vytxeTZskVKR7C7WgdSP3d",
+  "hydrusModels": ["model1", "model2", "model3"],
+  "modflowModel": "modModel"
+}
+```
 Returns download job ID in response. Job ID is used in order to monitor status of job downloading project files (**GET** `/status/{jobID}`).
 2. **POST** `/simulation/hydrus`  
+Request:
+```json
+{
+  "projectId": "vytxeTZskVKR7C7WgdSP3d",
+  "modelName": "exu3DTbj2ncsn9tLdLWspw"
+}
+```
 Returns Hydrus simulation job ID in response. Job ID is used to monitor status of Hydrus simulation (**GET** `/status/{jobID}`).
 3. **POST** `/simulation/modflow`  
+Request:
+```json
+{
+  "projectId": "vytxeTZskVKR7C7WgdSP3d",
+  "modelName": "exu3DTbj2ncsn9tLdLWspw"
+}
+```
 Returns Modflow simulation job ID in response. Job ID is used to monitor status of Modflow simulation (**GET** `/status/{jobID}`).
 4. **DELETE** `/project-files/{projectId}`
 Returns cleanup job ID in response. Job ID is used in order to monitor status of job cleaning temporary volume (**GET** `/status/{jobID}`).

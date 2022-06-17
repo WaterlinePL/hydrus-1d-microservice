@@ -17,8 +17,11 @@ class RestMethod(StrEnum):
 
 @app.route("/project-files", methods=[RestMethod.POST, RestMethod.DELETE])
 def manage_project_files():
-    project_name = request.json["project_name"]
+    project_name = request.json["projectId"]
     if request.method == RestMethod.POST:
+        # TODO: Parse models in order to launch the job
+        hydrus_models = request.json["hydrusModels"]
+        modflow_model = request.json["modflowModel"]
         return kubernetes_job_operator.create_file_download_job(project_name)
     elif request.method == RestMethod.DELETE:
         return kubernetes_job_operator.create_file_removal_job(project_name)
@@ -26,15 +29,15 @@ def manage_project_files():
 
 @app.route("/simulation/hydrus", methods=[RestMethod.POST])
 def launch_hydrus():
-    project_name = request.json["project_name"]
-    model = request.json["model"]
+    project_name = request.json["projectId"]
+    model = request.json["modelName"]
     return kubernetes_job_operator.create_hydrus_job(project_name, model)
 
 
 @app.route("/simulation/modflow", methods=[RestMethod.POST])
 def launch_modflow():
-    project_name = request.json["project_name"]
-    model = request.json["model"]
+    project_name = request.json["projectId"]
+    model = request.json["modelName"]
     return kubernetes_job_operator.create_modflow_job(project_name, model)
 
 

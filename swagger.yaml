@@ -42,7 +42,7 @@ paths:
         description: "Project ID"
         required: true
         schema:
-          $ref: "#/definitions/ProjectId"
+          $ref: "#/definitions/Project"
       responses:
         "200":
           description: "Job successfully started"
@@ -161,13 +161,23 @@ paths:
 #     name: "api_key"
 #     in: "header"
 definitions:
-  ProjectId:
+  Project:
     type: "object"
     properties:
-      projectId: 
+      projectId:
         type: "string"
         description: "ID of a simulation project"
         example: "vytxeTZskVKR7C7WgdSP3d"
+      hydrusModels:
+        type: array
+        description: "Array containing Hydrus models' names"
+        items:
+          type: string
+        example: ["model1", "model2", "model3"]
+      modflowModel:
+        type: string
+        description: "Modflow model name"
+        example: "modModel"
   JobId:
     type: "object"
     properties:
@@ -178,7 +188,7 @@ definitions:
   ModelDetails:
     type: "object"
     properties:
-      projectId: 
+      projectId:
         type: "string"
         description: "ID of a simulation project"
         example: "vytxeTZskVKR7C7WgdSP3d"
