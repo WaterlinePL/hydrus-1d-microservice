@@ -19,7 +19,6 @@ class RestMethod(StrEnum):
 def manage_project_files():
     project_name = request.json["projectId"]
     if request.method == RestMethod.POST:
-        # TODO: Parse models in order to launch the job
         hydrus_models = request.json["hydrusModels"]
         modflow_model = request.json["modflowModel"]
         return kubernetes_job_operator.create_file_download_job(project_name)

@@ -18,37 +18,26 @@ class YamlData:
     MODFLOW_VERSION = "mf2005"
     MODFLOW_VOLUME_MOUNT = "/workspace"
 
-    def __init__(self, project_name: str, model_name: str, model_type: HydrologicalModelEnum):
-        self.job_name = YamlData._create_job_name(model_name)
-        self.container_image = YamlData._select_docker_image(model_type)
-        self.container_name = YamlData._create_container_name(project_name, model_name)
-        self.mount_path = YamlData._get_mount_path(model_type)
-        self.args = YamlData._get_launch_args(model_type)
-        self.sub_path = YamlData._get_mount_subpath(project_name, model_name, model_type)
-        self.hydro_program = str(model_type)
-        self.description = YamlData._create_sample_description()
+    def __init__(self, job_prefix: str,
+                 container_image: str,
+                 container_name: str,
+                 mount_path: str,
+                 args: List[str],
+                 description: str):
+        self.job_name = YamlData._create_job_name(job_prefix)
+        self.container_image = container_image
+        self.container_name = container_name
+        self.mount_path = mount_path
+        self.args = args
+        self.extra_args = {}
+        self.description = description
+
+    def set_mount_sub_path(self, mount_sub_path: str):
+        self.extra_args["sub_path"] = mount_sub_path
 
     @staticmethod
-    def _create_job_name(model_name: str) -> str:
-        return f"{model_name}-{uuid.uuid4().hex[:YamlData.SHORTENED_UUID_LENGTH]}"
-
-    @staticmethod
-    def _create_container_name(project_name: str, model_name: str) -> str:
-        return f"{project_name}-{model_name}"
-
-    @staticmethod
-    def _select_docker_image(model_type: HydrologicalModelEnum) -> str:
-        if model_type is HydrologicalModelEnum.HYDRUS:
-            return YamlData.HYDRUS_IMAGE
-        elif model_type is HydrologicalModelEnum.MODFLOW:
-            return YamlData.MODFLOW_IMAGE
-
-    @staticmethod
-    def _get_mount_path(model_type: HydrologicalModelEnum) -> str:
-        if model_type is HydrologicalModelEnum.HYDRUS:
-            return YamlData.HYDRUS_VOLUME_MOUNT
-        elif model_type is HydrologicalModelEnum.MODFLOW:
-            return YamlData.MODFLOW_VOLUME_MOUNT
+    def _create_job_name(job_prefix: str) -> str:
+        return f"{job_prefix}-{uuid.uuid4().hex[:YamlData.SHORTENED_UUID_LENGTH]}"
 
     @staticmethod
     def _get_mount_subpath(project_name: str, model_name: str, model_type: HydrologicalModelEnum) -> str:
