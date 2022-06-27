@@ -9,7 +9,7 @@ from job_generator.yaml_job_generator import YamlJobGenerator
 class ProjectCleanupManifestCreator(AbstractManifestCreator):
 
     DOCKER_IMAGE = "watermodelling/project-cleanup-job:latest"
-    CONTAINER_NAME = "project-download"
+    CONTAINER_NAME = "project-cleanup"
     MOUNT_PATH = "/workspace"
 
     def __init__(self, project_name: str):
@@ -18,16 +18,16 @@ class ProjectCleanupManifestCreator(AbstractManifestCreator):
                          container_name=ProjectCleanupManifestCreator.CONTAINER_NAME,
                          mount_path=ProjectCleanupManifestCreator.MOUNT_PATH)
 
-    def get_job_prefix(self) -> str:
+    def _get_job_prefix(self) -> str:
         return f"cleanup-{self.project_name}"
 
-    def create_manifest(self, extra_args: Dict[str, str]) -> Tuple[YamlManifest, JobName]:
-        yaml_data = YamlData(job_prefix=self.get_job_prefix(),
+    def create_manifest(self) -> Tuple[YamlManifest, JobName]:
+        yaml_data = YamlData(job_prefix=self._get_job_prefix(),
                              container_image=self.container_image,
                              container_name=self.container_name,
                              mount_path=self.mount_path,
                              args=[],
-                             description=f"Download job for project: {self.project_name}")
+                             description=f"Cleanup job for project: {self.project_name}")
         return YamlJobGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 
     def get_redis_command(self) -> str:

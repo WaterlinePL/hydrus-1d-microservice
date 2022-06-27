@@ -19,11 +19,11 @@ class ModflowManifestCreator(AbstractManifestCreator):
                          mount_path=ModflowManifestCreator.MOUNT_PATH)
         self.modflow_model = modflow_model
 
-    def get_job_prefix(self) -> str:
+    def _get_job_prefix(self) -> str:
         return self.modflow_model
 
-    def create_manifest(self, extra_args: Dict[str, str]) -> Tuple[YamlManifest, JobName]:
-        yaml_data = YamlData(job_prefix=self.get_job_prefix(),
+    def create_manifest(self) -> Tuple[YamlManifest, JobName]:
+        yaml_data = YamlData(job_prefix=self._get_job_prefix(),
                              container_image=self.container_image,
                              container_name=self.container_name,
                              mount_path=self.mount_path,

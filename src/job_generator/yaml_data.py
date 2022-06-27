@@ -11,13 +11,6 @@ class HydrologicalModelEnum(StrEnum):
 class YamlData:
     SHORTENED_UUID_LENGTH = 21
 
-    HYDRUS_IMAGE = "watermodelling/hydrus-modflow-synergy-engine:hydrus1d_linux"
-    HYDRUS_VOLUME_MOUNT = "/workspace/hydrus"
-
-    MODFLOW_IMAGE = "mjstealey/docker-modflow"
-    MODFLOW_VERSION = "mf2005"
-    MODFLOW_VOLUME_MOUNT = "/workspace"
-
     def __init__(self, job_prefix: str,
                  container_image: str,
                  container_name: str,
@@ -38,18 +31,3 @@ class YamlData:
     @staticmethod
     def _create_job_name(job_prefix: str) -> str:
         return f"{job_prefix}-{uuid.uuid4().hex[:YamlData.SHORTENED_UUID_LENGTH]}"
-
-    @staticmethod
-    def _get_mount_subpath(project_name: str, model_name: str, model_type: HydrologicalModelEnum) -> str:
-        return f"{project_name}/{model_type}/{model_name}"
-
-    @staticmethod
-    def _create_sample_description() -> str:
-        return "sample description"
-
-    @staticmethod
-    def _get_launch_args(model_type: HydrologicalModelEnum) -> List[str]:
-        if model_type is HydrologicalModelEnum.HYDRUS:
-            return []
-        elif model_type is HydrologicalModelEnum.MODFLOW:
-            return [YamlData.MODFLOW_VERSION, None]  # TODO: .nam file instead of None

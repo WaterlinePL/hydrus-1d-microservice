@@ -1,7 +1,7 @@
 from flask import Flask, request
 from strenum import StrEnum
 
-import kubernetes_job_operator
+from job_manager import job_manager
 from redis_operator import RedisOperator
 
 app = Flask(__name__)

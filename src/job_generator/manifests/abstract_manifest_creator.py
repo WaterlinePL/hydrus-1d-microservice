@@ -14,7 +14,7 @@ class AbstractManifestCreator(ABC):
     mount_path: str
 
     @abstractmethod
-    def get_job_prefix(self) -> str:
+    def _get_job_prefix(self) -> str:
         ...
 
     @abstractmethod
@@ -22,5 +22,5 @@ class AbstractManifestCreator(ABC):
         ...
 
     @abstractmethod
-    def create_manifest(self, extra_args: Dict[str, str]) -> Tuple[YamlManifest, JobName]:
+    def create_manifest(self) -> Tuple[YamlManifest, JobName]:
         ...
