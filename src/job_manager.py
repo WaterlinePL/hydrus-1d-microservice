@@ -12,7 +12,7 @@ from redis_operator import RedisOperator
 ModelName = str
 JobId = str
 
-JOB_NAMESPACE = "simulation-jobs"
+JOB_NAMESPACE = "default"  # "simulation-jobs"
 REDIS_URL = "127.0.0.1:6379"  # TODO: get from env? or ingress?
 
 
@@ -41,7 +41,7 @@ class JobManager:
 
     def _deploy_job(self, manifest_creator: AbstractManifestCreator):
         manifest, job_name = manifest_creator.create_manifest()
-        self.redis_operator.put_job_command(f"wf:{job_name}", manifest_creator.get_redis_command())
+        self.redis_operator.put_job_command(f"wf:{job_name}_msg", manifest_creator.get_redis_command())
         with kubernetes.client.ApiClient() as api:
             batch_api = kubernetes.client.BatchV1Api(api)
             batch_api.create_namespaced_job(JOB_NAMESPACE, manifest)

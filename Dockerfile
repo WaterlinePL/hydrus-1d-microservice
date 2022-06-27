@@ -4,5 +4,7 @@ RUN chmod +x ./kubectl
 RUN mv ./kubectl /usr/local/bin/kubectl
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install -r requirements.txt
-# TODO: launch application with correct redis URL
-CMD ["kubectl"]
+COPY src/ app/
+WORKDIR /app
+ENV PYTHONPATH /app
+CMD ["python3", "main.py"]

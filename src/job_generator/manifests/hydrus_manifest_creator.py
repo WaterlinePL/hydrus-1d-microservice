@@ -27,7 +27,6 @@ class HydrusManifestCreator(AbstractManifestCreator):
                              container_image=self.container_image,
                              container_name=self.container_name,
                              mount_path=self.mount_path,
-                             args=[],
                              description=f"Hydrus simulation for {self.hydrus_model}")
         yaml_data.set_mount_sub_path(f"{self.project_name}/{HydrologicalModelEnum.HYDRUS}/{self.hydrus_model}")
         return YamlJobGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name

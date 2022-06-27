@@ -1,7 +1,7 @@
 import os
 from typing import Dict
 
-from src.job_generator.yaml_data import YamlData
+from job_generator.yaml_data import YamlData
 
 YamlManifest = Dict[str, str]
 
@@ -27,6 +27,8 @@ class YamlJobGenerator:
 
         if "sub_path" in data.extra_args:
             containers[0]['volumeMounts'][0]['subPath'] = data.extra_args['sub_path']
+        if "env" in data.extra_args:
+            containers[0]["env"] = data.extra_args["env"]
 
         volumes = [{
             'name': YamlJobGenerator.VOLUME_NAME,

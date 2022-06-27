@@ -27,7 +27,6 @@ class ModflowManifestCreator(AbstractManifestCreator):
                              container_image=self.container_image,
                              container_name=self.container_name,
                              mount_path=self.mount_path,
-                             args=[],
                              description=f"Modflow simulation for {self.modflow_model}")
         return YamlJobGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 
