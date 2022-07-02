@@ -116,7 +116,7 @@ paths:
         description: "Modflow input"
         required: true
         schema:
-          $ref: "#/definitions/ModelDetails"
+          $ref: "#/definitions/ModflowModelDetails"
       responses:
         "200":
           description: "Job successfully started"
@@ -196,6 +196,15 @@ definitions:
         type: "string"
         description: "Name of hydrological model"
         example: "exu3DTbj2ncsn9tLdLWspw"
+  ModflowModelDetails:
+    type: "object"
+    properties:
+      modelDetails:
+        $ref: "#/definitions/ModelDetails"
+      spinUp:
+        type: "integer"
+        description: "Spin up time in days"
+        example: "365"
   JobStatus:
     type: "string"
     description: "Job status"
