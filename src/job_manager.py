@@ -29,8 +29,8 @@ class JobManager:
         manifest_creator = HydrusManifestCreator(project_name, hydrus_model)
         return self._deploy_job(manifest_creator)
 
-    def create_modflow_job(self, project_name: str, modflow_model: ModelName) -> JobId:
-        manifest_creator = ModflowManifestCreator(project_name, modflow_model)
+    def create_modflow_job(self, project_name: str, modflow_model: ModelName, spin_up: int) -> JobId:
+        manifest_creator = ModflowManifestCreator(project_name, modflow_model, spin_up)
         return self._deploy_job(manifest_creator)
 
     def create_cleanup_job(self, project_name: str) -> JobId:

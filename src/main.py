@@ -33,9 +33,10 @@ def launch_hydrus():
 
 @app.route("/simulation/modflow", methods=[RestMethod.POST])
 def launch_modflow():
-    project_name = request.json["projectId"]
-    model = request.json["modelName"]
-    return job_manager.create_modflow_job(project_name, model)
+    project_name = request.json["modelDetails"]["projectId"]
+    model = request.json["modelDetails"]["modelName"]
+    spin_up = request.json["spinUp"]
+    return job_manager.create_modflow_job(project_name, model, spin_up)
 
 
 @app.route("/status/<job_id>", methods=[RestMethod.GET])
