@@ -12,12 +12,13 @@ class ModflowManifestCreator(AbstractManifestCreator):
     CONTAINER_NAME = "modflow"
     MOUNT_PATH = "/workspace"
 
-    def __init__(self, project_name: str, modflow_model: str):
+    def __init__(self, project_name: str, modflow_model: str, spin_up: int):
         super().__init__(project_name=project_name,
                          container_image=ModflowManifestCreator.DOCKER_IMAGE,
                          container_name=ModflowManifestCreator.CONTAINER_NAME,
                          mount_path=ModflowManifestCreator.MOUNT_PATH)
         self.modflow_model = modflow_model
+        self.spin_up = spin_up
 
     def _get_job_prefix(self) -> str:
         return self.modflow_model
@@ -33,9 +34,8 @@ class ModflowManifestCreator(AbstractManifestCreator):
     def get_redis_command(self) -> str:
         cmd = {
             "executable": "bash",
-            "args": [],     # TODO: get modflow ready
+            "args": ["launch_modflow.sh", self.project_name, self.modflow_model, self.spin_up],
             "inputs": [],
             "outputs": []
         }
         return json.dumps(cmd)
-

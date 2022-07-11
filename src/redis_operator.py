@@ -1,12 +1,15 @@
 import redis
 from strenum import StrEnum
 
+from job_generator.yaml_job_generator import YamlJobGenerator
+
 
 class JobStatus(StrEnum):
     FAILED = "failed"
     SUCCESS = "success"
+    PENDING = "pending"
+    RUNNING = "running"
     NOT_FOUND = "not found"
-    IN_PROGRESS = "in progress"
 
 
 class RedisOperator:
@@ -19,12 +22,27 @@ class RedisOperator:
         self.redis_client.lpush(key, cmd)
 
     def get_job_status(self, job_name: str) -> JobStatus:
-        # TODO: get status using correct operations on redis (discover which messages)
-        #  it might be sth like this:
-        job_status = self.redis_client.lpop(job_name)
-        if job_status:
-            # TODO: Parse the status
-            return JobStatus.SUCCESS
+        job_key_prefix = f"wf:{job_name}"
+        was_initialized = self.redis_client.llen(f"{job_key_prefix}_msg") > 0
+
+        if was_initialized:
+            job_exec_statuses = set(int(status) for status in self.redis_client.smembers(job_key_prefix))
+            acq_count = self.redis_client.get(f"{job_key_prefix}_acqCount")
+            was_acquired = acq_count is not None and int(acq_count) > 0
+
+            completed_successfully = 0 in job_exec_statuses
+            is_failed = all(status != 0 for status in job_exec_statuses) \
+                        and len(job_exec_statuses) == YamlJobGenerator.BACKOFF_LIMIT + 1
+
+            # Order is very important
+            if completed_successfully:
+                return JobStatus.SUCCESS
+            elif not was_acquired:
+                return JobStatus.PENDING
+            elif is_failed:
+                return JobStatus.FAILED
+            elif was_acquired:
+                return JobStatus.RUNNING
         return JobStatus.NOT_FOUND
 
     def close(self):

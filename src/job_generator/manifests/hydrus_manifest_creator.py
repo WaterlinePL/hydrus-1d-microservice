@@ -10,7 +10,7 @@ class HydrusManifestCreator(AbstractManifestCreator):
 
     DOCKER_IMAGE = "watermodelling/hydrus-job:latest"
     CONTAINER_NAME = "hydrus"
-    MOUNT_PATH = "/workspace/hydrus"
+    MOUNT_PATH = "/workspace"
 
     def __init__(self, project_name: str, hydrus_model: str):
         super().__init__(project_name=project_name,
@@ -39,4 +39,3 @@ class HydrusManifestCreator(AbstractManifestCreator):
             "outputs": []
         }
         return json.dumps(cmd)
-

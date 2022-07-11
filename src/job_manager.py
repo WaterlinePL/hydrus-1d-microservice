@@ -1,19 +1,21 @@
+import os
 from typing import List
 
 import kubernetes as kubernetes
+from werkzeug.exceptions import abort
 
 from job_generator.manifests.abstract_manifest_creator import AbstractManifestCreator
 from job_generator.manifests.cleanup_manifest_creator import ProjectCleanupManifestCreator
 from job_generator.manifests.download_manifest_creator import ProjectDownloadManifestCreator
 from job_generator.manifests.hydrus_manifest_creator import HydrusManifestCreator
 from job_generator.manifests.modflow_manifest_creator import ModflowManifestCreator
-from redis_operator import RedisOperator
+from redis_operator import RedisOperator, JobStatus
 
 ModelName = str
 JobId = str
 
-JOB_NAMESPACE = "default"  # "simulation-jobs"
-REDIS_URL = "127.0.0.1:6379"  # TODO: get from env? or ingress?
+JOB_NAMESPACE = "hydrological-simulations"
+REDIS_URL = os.environ['REDIS_URL_WITH_PORT']
 
 
 class JobManager:
@@ -28,8 +30,8 @@ class JobManager:
         manifest_creator = HydrusManifestCreator(project_name, hydrus_model)
         return self._deploy_job(manifest_creator)
 
-    def create_modflow_job(self, project_name: str, modflow_model: ModelName) -> JobId:
-        manifest_creator = ModflowManifestCreator(project_name, modflow_model)
+    def create_modflow_job(self, project_name: str, modflow_model: ModelName, spin_up: int) -> JobId:
+        manifest_creator = ModflowManifestCreator(project_name, modflow_model, spin_up)
         return self._deploy_job(manifest_creator)
 
     def create_cleanup_job(self, project_name: str) -> JobId:
@@ -37,7 +39,10 @@ class JobManager:
         return self._deploy_job(manifest_creator)
 
     def check_job(self, job_id: str):
-        return self.redis_operator.get_job_status(job_id)
+        status = self.redis_operator.get_job_status(job_id)
+        if status == JobStatus.NOT_FOUND:
+            abort(404)
+        return status
 
     def _deploy_job(self, manifest_creator: AbstractManifestCreator):
         manifest, job_name = manifest_creator.create_manifest()

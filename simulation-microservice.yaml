@@ -1,9 +1,15 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: hydrological-simulations
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
-  name: web-app-role
+  name: job-management
+  namespace: hydrological-simulations
 rules:
-  - apiGroups: [""]
+  - apiGroups: ["batch"]
     resources:
       - pods
       - jobs
@@ -16,24 +22,28 @@ rules:
 apiVersion: v1
 kind: ServiceAccount
 metadata:
-  name: internal-kubectl
+  name: job-management-account
+  namespace: hydrological-simulations
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
-  name: cluster-supervisor
+  name: job-manager
+  namespace: hydrological-simulations
 subjects:
   - kind: ServiceAccount
-    name: internal-kubectl
+    name: job-management-account
+
 roleRef:
   kind: Role
-  name: web-app-role
+  name: job-management
   apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: simulation-job-management-service
+  namespace: hydrological-simulations
 spec:
   replicas: 1
   selector:
@@ -44,13 +54,42 @@ spec:
       labels:
         app: simulation-job-management-service
     spec:
-      serviceAccountName: internal-kubectl
+      serviceAccountName: job-management-account
       containers:
       - name: simulation-job-management-service
         image: watermodelling/simulation-job-management-service:latest
-        # TODO: remove
-        imagePullPolicy: Never
-#        securityContext:
-#          privileged: True
+        imagePullPolicy: Always
         ports:
-        - containerPort: 7777
+        - containerPort: 8080
+        env:
+        - name: NFS_PVC
+          value: simuation-nfs-pvc
+        - name: REDIS_URL_WITH_PORT
+          value: <url:port>
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job-management-svc
+  namespace: hydrological-simulations
+spec:
+  selector:
+    app: simulation-job-management-service
+  ports:
+  - name: simulation-management-webapp
+    protocol: TCP
+    port: 8080
+    targetPort: 8080
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: simuation-nfs-pvc
+  namespace: hydrological-simulations
+spec:
+  accessModes:
+    - ReadWriteMany
+  storageClassName: nfs
+  resources:
+    requests:
+      storage: 2Gi
