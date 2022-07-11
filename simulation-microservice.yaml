@@ -63,9 +63,9 @@ spec:
         - containerPort: 8080
         env:
         - name: NFS_PVC
-          value: nfs-pvc
+          value: simuation-nfs-pvc
         - name: REDIS_URL_WITH_PORT
-          value: 10.1.5.69:6379
+          value: <url:port>
 ---
 apiVersion: v1
 kind: Service
@@ -84,7 +84,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: nfs-pvc
+  name: simuation-nfs-pvc
   namespace: hydrological-simulations
 spec:
   accessModes:
