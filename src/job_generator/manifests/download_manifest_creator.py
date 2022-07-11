@@ -3,7 +3,7 @@ from typing import Dict, Tuple, List
 
 from job_generator.manifests import minio_secret_ref
 from job_generator.manifests.abstract_manifest_creator import AbstractManifestCreator, YamlManifest, JobName
-from job_generator.yaml_data import YamlData, HydrologicalModelEnum
+from job_generator.yaml_data import YamlData
 from job_generator.yaml_job_generator import YamlJobGenerator
 
 
@@ -52,4 +52,3 @@ class ProjectDownloadManifestCreator(AbstractManifestCreator):
             "outputs": []
         }
         return json.dumps(cmd)
-

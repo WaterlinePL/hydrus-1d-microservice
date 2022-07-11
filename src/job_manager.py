@@ -1,3 +1,4 @@
+import os
 from typing import List
 
 import kubernetes as kubernetes
@@ -13,8 +14,8 @@ from redis_operator import RedisOperator, JobStatus
 ModelName = str
 JobId = str
 
-JOB_NAMESPACE = "default"  # "simulation-jobs"
-REDIS_URL = "127.0.0.1:6379"  # TODO: get from env? or ingress?
+JOB_NAMESPACE = "hydrological-simulations"
+REDIS_URL = os.environ['REDIS_URL_WITH_PORT']
 
 
 class JobManager:

@@ -13,15 +13,17 @@ class RestMethod(StrEnum):
     POST = 'POST'
 
 
-@app.route("/project-files", methods=[RestMethod.POST, RestMethod.DELETE])
-def manage_project_files():
+@app.route("/project-files", methods=[RestMethod.POST])
+def download_project_files():
     project_name = request.json["projectId"]
-    if request.method == RestMethod.POST:
-        hydrus_models = request.json["hydrusModels"]
-        modflow_model = request.json["modflowModel"]
-        return job_manager.create_download_job(project_name, hydrus_models, modflow_model)
-    elif request.method == RestMethod.DELETE:
-        return job_manager.create_cleanup_job(project_name)
+    hydrus_models = request.json["hydrusModels"]
+    modflow_model = request.json["modflowModel"]
+    return job_manager.create_download_job(project_name, hydrus_models, modflow_model)
+
+
+@app.route("/project-files/<project_id>", methods=[RestMethod.DELETE])
+def delete_project_files(project_id: str):
+    return job_manager.create_cleanup_job(project_id)
 
 
 @app.route("/simulation/hydrus", methods=[RestMethod.POST])
@@ -45,7 +47,6 @@ def get_simulation_job_status(job_id: str):
 
 
 if __name__ == '__main__':
-    # run flask app
     # config.load_kube_config()
     config.load_incluster_config()
-    app.run(debug=True, host="0.0.0.0", port=7777)
+    app.run(debug=True, host="0.0.0.0", port=8080)

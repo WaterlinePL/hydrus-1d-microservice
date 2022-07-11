@@ -17,6 +17,7 @@ class YamlJobGenerator:
         containers = [{
             'image': data.container_image,
             'name': data.container_name,
+            'imagePullPolicy': "Always",
             'volumeMounts': [{
                 'mountPath': data.mount_path,
                 'name': YamlJobGenerator.VOLUME_NAME

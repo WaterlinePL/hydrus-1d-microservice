@@ -1,6 +1,8 @@
 import redis
 from strenum import StrEnum
 
+from job_generator.yaml_job_generator import YamlJobGenerator
+
 
 class JobStatus(StrEnum):
     FAILED = "failed"
@@ -27,8 +29,10 @@ class RedisOperator:
             job_exec_statuses = set(int(status) for status in self.redis_client.smembers(job_key_prefix))
             acq_count = self.redis_client.get(f"{job_key_prefix}_acqCount")
             was_acquired = acq_count is not None and int(acq_count) > 0
+
             completed_successfully = 0 in job_exec_statuses
-            is_failed = all(status != 0 for status in job_exec_statuses)
+            is_failed = all(status != 0 for status in job_exec_statuses) \
+                        and len(job_exec_statuses) == YamlJobGenerator.BACKOFF_LIMIT + 1
 
             # Order is very important
             if completed_successfully:

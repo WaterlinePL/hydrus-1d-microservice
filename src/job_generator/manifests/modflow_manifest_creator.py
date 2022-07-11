@@ -34,7 +34,7 @@ class ModflowManifestCreator(AbstractManifestCreator):
     def get_redis_command(self) -> str:
         cmd = {
             "executable": "bash",
-            "args": [],     # TODO: get modflow ready (with spin up)
+            "args": ["launch_modflow.sh", self.project_name, self.modflow_model, self.spin_up],
             "inputs": [],
             "outputs": []
         }
