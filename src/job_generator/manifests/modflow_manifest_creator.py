@@ -3,7 +3,7 @@ from typing import Dict, Tuple
 
 from job_generator.manifests.abstract_manifest_creator import AbstractManifestCreator, YamlManifest, JobName
 from job_generator.yaml_data import YamlData, HydrologicalModelEnum
-from job_generator.yaml_job_generator import YamlJobGenerator
+from job_generator.yaml_job_generator import JobManifestGenerator
 
 
 class ModflowManifestCreator(AbstractManifestCreator):
@@ -29,7 +29,7 @@ class ModflowManifestCreator(AbstractManifestCreator):
                              container_name=self.container_name,
                              mount_path=self.mount_path,
                              description=f"Modflow simulation for {self.modflow_model}")
-        return YamlJobGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
+        return JobManifestGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 
     def get_redis_command(self) -> str:
         cmd = {

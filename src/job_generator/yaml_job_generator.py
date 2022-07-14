@@ -6,9 +6,10 @@ from job_generator.yaml_data import YamlData
 YamlManifest = Dict[str, str]
 
 
-class YamlJobGenerator:
+class JobManifestGenerator:
     # IMPORTANT: create env variable 'NFS_PVC' with name of PVC
     PVC_NAME = os.environ['NFS_PVC']
+    SIMULATION_NAMESPACE = os.environ["SIMULATION_NAMESPACE"]
     VOLUME_NAME = "simulation-volume"
     BACKOFF_LIMIT = 2
 
@@ -20,7 +21,7 @@ class YamlJobGenerator:
             'imagePullPolicy': "Always",
             'volumeMounts': [{
                 'mountPath': data.mount_path,
-                'name': YamlJobGenerator.VOLUME_NAME
+                'name': JobManifestGenerator.VOLUME_NAME
                 # 'subPath': data.extra_args['sub_path']    # only if specified
             }],
             'args': data.args
@@ -32,9 +33,9 @@ class YamlJobGenerator:
             containers[0]["env"] = data.extra_args["env"]
 
         volumes = [{
-            'name': YamlJobGenerator.VOLUME_NAME,
+            'name': JobManifestGenerator.VOLUME_NAME,
             'persistentVolumeClaim': {
-                'claimName': YamlJobGenerator.PVC_NAME
+                'claimName': JobManifestGenerator.PVC_NAME
             }
         }]
 
@@ -57,7 +58,7 @@ class YamlJobGenerator:
                 'template': {
                     'spec': spec
                 },
-                'backoffLimit': YamlJobGenerator.BACKOFF_LIMIT
+                'backoffLimit': JobManifestGenerator.BACKOFF_LIMIT
             }
         }
 

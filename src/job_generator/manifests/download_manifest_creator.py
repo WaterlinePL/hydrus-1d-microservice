@@ -4,7 +4,7 @@ from typing import Dict, Tuple, List
 from job_generator.manifests import minio_secret_ref
 from job_generator.manifests.abstract_manifest_creator import AbstractManifestCreator, YamlManifest, JobName
 from job_generator.yaml_data import YamlData
-from job_generator.yaml_job_generator import YamlJobGenerator
+from job_generator.yaml_job_generator import JobManifestGenerator
 
 
 class ProjectDownloadManifestCreator(AbstractManifestCreator):
@@ -37,7 +37,7 @@ class ProjectDownloadManifestCreator(AbstractManifestCreator):
                              mount_path=self.mount_path,
                              description=f"Download job for project: {self.project_name}")
         yaml_data.extra_args["env"] = ProjectDownloadManifestCreator.ENV
-        return YamlJobGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
+        return JobManifestGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 
     def get_redis_command(self) -> str:
         args = ["download_project.sh", self.project_name, f"modflow:{self.modflow_model}"]

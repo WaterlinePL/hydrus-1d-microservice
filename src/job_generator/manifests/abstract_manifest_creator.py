@@ -1,6 +1,7 @@
+import os
 from abc import ABC, abstractmethod
 from dataclasses import dataclass
-from typing import Dict, Tuple
+from typing import Dict, Tuple, ClassVar
 
 YamlManifest = Dict[str, str]
 JobName = str
