@@ -10,9 +10,8 @@ JobName = str
 @dataclass
 class AbstractManifestCreator(ABC):
     project_name: str
-    container_image: str
+    docker_image: str
     container_name: str
-    mount_path: str
 
     @abstractmethod
     def _get_job_prefix(self) -> str:

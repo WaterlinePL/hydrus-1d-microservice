@@ -10,13 +10,11 @@ class HydrusManifestCreator(AbstractManifestCreator):
 
     DOCKER_IMAGE = "watermodelling/hydrus-job:latest"
     CONTAINER_NAME = "hydrus"
-    MOUNT_PATH = "/workspace"
 
     def __init__(self, project_name: str, hydrus_model: str):
         super().__init__(project_name=project_name,
                          container_image=HydrusManifestCreator.DOCKER_IMAGE,
-                         container_name=HydrusManifestCreator.CONTAINER_NAME,
-                         mount_path=HydrusManifestCreator.MOUNT_PATH)
+                         container_name=HydrusManifestCreator.CONTAINER_NAME)
         self.hydrus_model = hydrus_model
 
     def _get_job_prefix(self) -> str:
@@ -24,9 +22,8 @@ class HydrusManifestCreator(AbstractManifestCreator):
 
     def create_manifest(self) -> Tuple[YamlManifest, JobName]:
         yaml_data = YamlData(job_prefix=self._get_job_prefix(),
-                             container_image=self.container_image,
+                             docker_image=self.docker_image,
                              container_name=self.container_name,
-                             mount_path=self.mount_path,
                              description=f"Hydrus simulation for {self.hydrus_model}")
         yaml_data.set_mount_sub_path(f"{self.project_name}/{HydrologicalModelEnum.HYDRUS}/{self.hydrus_model}")
         return JobManifestGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name

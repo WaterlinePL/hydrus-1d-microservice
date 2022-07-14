@@ -1,4 +1,6 @@
-minio_secret = "minio-secret"
+import os
+
+minio_secret = os.environ["MINIO_SECRET_NAME"]
 
 endpoint = {
     "name": "ENDPOINT",

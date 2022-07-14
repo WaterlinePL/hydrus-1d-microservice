@@ -11,7 +11,6 @@ class ProjectCleanupManifestCreator(AbstractManifestCreator):
 
     DOCKER_IMAGE = "watermodelling/project-cleanup-job:latest"
     CONTAINER_NAME = "project-cleanup"
-    MOUNT_PATH = "/workspace"
 
     ENV = [
         minio_secret_ref.endpoint,
@@ -22,19 +21,17 @@ class ProjectCleanupManifestCreator(AbstractManifestCreator):
     def __init__(self, project_name: str):
         super().__init__(project_name=project_name,
                          container_image=ProjectCleanupManifestCreator.DOCKER_IMAGE,
-                         container_name=ProjectCleanupManifestCreator.CONTAINER_NAME,
-                         mount_path=ProjectCleanupManifestCreator.MOUNT_PATH)
+                         container_name=ProjectCleanupManifestCreator.CONTAINER_NAME)
 
     def _get_job_prefix(self) -> str:
         return f"cleanup-{self.project_name}"
 
     def create_manifest(self) -> Tuple[YamlManifest, JobName]:
         yaml_data = YamlData(job_prefix=self._get_job_prefix(),
-                             container_image=self.container_image,
+                             docker_image=self.docker_image,
                              container_name=self.container_name,
-                             mount_path=self.mount_path,
                              description=f"Cleanup job for project: {self.project_name}")
-        yaml_data.extra_args["env"] = ProjectCleanupManifestCreator.ENV
+        yaml_data.set_env(ProjectCleanupManifestCreator.ENV)
         return JobManifestGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 
     def get_redis_command(self) -> str:
