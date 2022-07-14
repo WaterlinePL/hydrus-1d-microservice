@@ -4,27 +4,24 @@ from typing import Dict
 import yaml
 from jinja2 import Environment, FileSystemLoader
 
-import job_manager
+import config
 from job_generator.yaml_data import YamlData
 
 YamlManifest = Dict[str, str]
 
 
 class JobManifestGenerator:
-    # IMPORTANT: create env variable 'NFS_PVC' with name of PVC
-    PVC_NAME = os.environ['NFS_PVC']
-    SIMULATION_NAMESPACE = os.environ["SIMULATION_NAMESPACE"]
 
     @staticmethod
     def prepare_kubernetes_job(data: YamlData) -> YamlManifest:
-        templating_env = Environment(loader=FileSystemLoader("."), trim_blocks=True, lstrip_blocks=True)
+        templating_env = Environment(loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True)
         template = templating_env.get_template("job_template.yaml")
         return yaml.safe_load(template.render(job_name=data.job_name,
-                                              job_namespace=JobManifestGenerator.SIMULATION_NAMESPACE,
+                                              job_namespace=config.SIMULATION_NAMESPACE,
                                               job_description=data.description,
-                                              pvc_name=JobManifestGenerator.PVC_NAME,
+                                              pvc_name=config.PVC_NAME,
                                               container_name=data.container_name,
                                               docker_image=data.docker_image,
                                               task_id=data.task_id,
-                                              redis_url=f"//{job_manager.REDIS_URL}",
+                                              redis_url=f"//{config.REDIS_URL}",
                                               **data.extra_args))

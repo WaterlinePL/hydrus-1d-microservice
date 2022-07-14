@@ -4,6 +4,7 @@ from typing import List
 import kubernetes as kubernetes
 from werkzeug.exceptions import abort
 
+import config
 from job_generator.manifests.abstract_manifest_creator import AbstractManifestCreator
 from job_generator.manifests.cleanup_manifest_creator import ProjectCleanupManifestCreator
 from job_generator.manifests.download_manifest_creator import ProjectDownloadManifestCreator
@@ -14,8 +15,6 @@ from redis_operator import RedisOperator, JobStatus
 
 ModelName = str
 JobId = str
-
-REDIS_URL = os.environ['REDIS_URL_WITH_PORT']
 
 
 class JobManager:
@@ -49,8 +48,8 @@ class JobManager:
         self.redis_operator.put_job_command(f"wf:{job_name}_msg", manifest_creator.get_redis_command())
         with kubernetes.client.ApiClient() as api:
             batch_api = kubernetes.client.BatchV1Api(api)
-            batch_api.create_namespaced_job(JobManifestGenerator.SIMULATION_NAMESPACE, manifest)
+            batch_api.create_namespaced_job(config.SIMULATION_NAMESPACE, manifest)
             return job_name
 
 
-job_manager = JobManager(REDIS_URL)
+job_manager = JobManager(config.REDIS_URL)

@@ -2,8 +2,6 @@ import uuid
 from typing import List, Dict, Any
 from strenum import StrEnum
 
-import job_manager
-
 # Formatted as in .yaml
 YamlEnvVariable = Dict[str, Any]
 
@@ -31,7 +29,7 @@ class YamlData:
         self.extra_args["sub_path"] = f"subPath: {mount_sub_path}"
 
     def set_env(self, env_variable_list: List[YamlEnvVariable]):
-        self.extra_args["env"] = env_variable_list
+        self.extra_args["env"] = f"env: {env_variable_list}"
 
     @staticmethod
     def _create_job_name(job_prefix: str) -> str:
