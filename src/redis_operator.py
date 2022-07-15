@@ -1,6 +1,7 @@
 import redis
 from strenum import StrEnum
 
+import config
 from job_generator.yaml_job_generator import JobManifestGenerator
 
 
@@ -32,7 +33,7 @@ class RedisOperator:
 
             completed_successfully = 0 in job_exec_statuses
             is_failed = all(status != 0 for status in job_exec_statuses) \
-                        and len(job_exec_statuses) == JobManifestGenerator.BACKOFF_LIMIT + 1
+                        and len(job_exec_statuses) == config.BACKOFF_LIMIT + 1
 
             # Order is very important
             if completed_successfully:

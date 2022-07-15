@@ -5,6 +5,7 @@ RUN mv ./kubectl /usr/local/bin/kubectl
 COPY requirements.txt requirements.txt
 RUN python3 -m pip install -r requirements.txt
 COPY src/ app/
+COPY templates/ app/templates/
 WORKDIR /app
 ENV PYTHONPATH /app
 CMD ["python3", "main.py"]

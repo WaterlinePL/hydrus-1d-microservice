@@ -23,4 +23,4 @@ spec:
           {{ sub_path }}
         {{ env }}
       restartPolicy: Never
-  backoffLimit: 2
+  backoffLimit: {{ backoff_limit }}

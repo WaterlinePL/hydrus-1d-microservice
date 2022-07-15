@@ -98,7 +98,7 @@ class TestJobGenerator(unittest.TestCase):
                 }
             },
             'spec': {
-                'backoffLimit': 2,
+                'backoffLimit': config.BACKOFF_LIMIT,
                 'template': {
                     'spec': spec
                 }

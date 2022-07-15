@@ -24,4 +24,5 @@ class JobManifestGenerator:
                                               docker_image=data.docker_image,
                                               task_id=data.task_id,
                                               redis_url=f"//{config.REDIS_URL}",
+                                              backoff_limit=config.BACKOFF_LIMIT,
                                               **data.extra_args))
