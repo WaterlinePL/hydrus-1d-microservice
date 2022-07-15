@@ -1,0 +1,6 @@
+import os
+
+REDIS_URL = os.environ['REDIS_URL_WITH_PORT']
+SIMULATION_NAMESPACE = os.environ["SIMULATION_NAMESPACE"]
+PVC_NAME = os.environ['NFS_PVC']
+BACKOFF_LIMIT = 2

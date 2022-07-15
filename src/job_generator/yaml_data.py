@@ -1,8 +1,9 @@
 import uuid
-from typing import List
+from typing import List, Dict, Any
 from strenum import StrEnum
 
-import job_manager
+# Formatted as in .yaml
+YamlEnvVariable = Dict[str, Any]
 
 
 class HydrologicalModelEnum(StrEnum):
@@ -14,23 +15,21 @@ class YamlData:
     SHORTENED_UUID_LENGTH = 21
 
     def __init__(self, job_prefix: str,
-                 container_image: str,
+                 docker_image: str,
                  container_name: str,
-                 mount_path: str,
                  description: str):
         self.job_name = YamlData._create_job_name(job_prefix)
-        self.container_image = container_image
+        self.docker_image = docker_image
         self.container_name = container_name
-        self.mount_path = mount_path
-        self.args = ["hflow-job-execute", f"wf:{self.job_name}", f"//{job_manager.REDIS_URL}"]
+        self.task_id = f"wf:{self.job_name}"
         self.extra_args = {}
         self.description = description
 
     def set_mount_sub_path(self, mount_sub_path: str):
-        self.extra_args["sub_path"] = mount_sub_path
+        self.extra_args["sub_path"] = f"subPath: {mount_sub_path}"
 
-    def set_env(self, env):
-        self.extra_args["env"] = env
+    def set_env(self, env_variable_list: List[YamlEnvVariable]):
+        self.extra_args["env"] = f"env: {env_variable_list}"
 
     @staticmethod
     def _create_job_name(job_prefix: str) -> str:

@@ -1,0 +1,26 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: {{ job_name }}
+  namespace: {{ job_namespace }}
+  annotations:
+    description: {{ job_description }}
+spec:
+  template:
+    spec:
+      volumes:
+        - name: simulation-volume
+          persistentVolumeClaim:
+            claimName: {{ pvc_name }}
+      containers:
+      - name: {{ container_name }}
+        image: {{ docker_image }}
+        imagePullPolicy: Always
+        args: ["hflow-job-execute", {{ task_id }}, {{ redis_url }}]
+        volumeMounts:
+        - mountPath: /workspace
+          name: simulation-volume
+          {{ sub_path }}
+        {{ env }}
+      restartPolicy: Never
+  backoffLimit: {{ backoff_limit }}

@@ -1,64 +1,28 @@
 import os
 from typing import Dict
 
+import yaml
+from jinja2 import Environment, FileSystemLoader
+
+import config
 from job_generator.yaml_data import YamlData
 
 YamlManifest = Dict[str, str]
 
 
-class YamlJobGenerator:
-    # IMPORTANT: create env variable 'NFS_PVC' with name of PVC
-    PVC_NAME = os.environ['NFS_PVC']
-    VOLUME_NAME = "simulation-volume"
-    BACKOFF_LIMIT = 2
+class JobManifestGenerator:
 
     @staticmethod
     def prepare_kubernetes_job(data: YamlData) -> YamlManifest:
-        containers = [{
-            'image': data.container_image,
-            'name': data.container_name,
-            'imagePullPolicy': "Always",
-            'volumeMounts': [{
-                'mountPath': data.mount_path,
-                'name': YamlJobGenerator.VOLUME_NAME
-                # 'subPath': data.extra_args['sub_path']    # only if specified
-            }],
-            'args': data.args
-        }]
-
-        if "sub_path" in data.extra_args:
-            containers[0]['volumeMounts'][0]['subPath'] = data.extra_args['sub_path']
-        if "env" in data.extra_args:
-            containers[0]["env"] = data.extra_args["env"]
-
-        volumes = [{
-            'name': YamlJobGenerator.VOLUME_NAME,
-            'persistentVolumeClaim': {
-                'claimName': YamlJobGenerator.PVC_NAME
-            }
-        }]
-
-        spec = {
-            'containers': containers,
-            'volumes': volumes,
-            'restartPolicy': 'Never'
-        }
-
-        config = {
-            'apiVersion': 'batch/v1',
-            'kind': 'Job',
-            'metadata': {
-                'name': data.job_name,
-                'annotations': {
-                    'description': data.description
-                }
-            },
-            'spec': {
-                'template': {
-                    'spec': spec
-                },
-                'backoffLimit': YamlJobGenerator.BACKOFF_LIMIT
-            }
-        }
-
-        return config
+        templating_env = Environment(loader=FileSystemLoader("templates"), trim_blocks=True, lstrip_blocks=True)
+        template = templating_env.get_template("job_template.yaml")
+        return yaml.safe_load(template.render(job_name=data.job_name,
+                                              job_namespace=config.SIMULATION_NAMESPACE,
+                                              job_description=data.description,
+                                              pvc_name=config.PVC_NAME,
+                                              container_name=data.container_name,
+                                              docker_image=data.docker_image,
+                                              task_id=data.task_id,
+                                              redis_url=f"//{config.REDIS_URL}",
+                                              backoff_limit=config.BACKOFF_LIMIT,
+                                              **data.extra_args))
