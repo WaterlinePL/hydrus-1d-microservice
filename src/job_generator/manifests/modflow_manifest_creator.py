@@ -13,7 +13,7 @@ class ModflowManifestCreator(AbstractManifestCreator):
 
     def __init__(self, project_name: str, modflow_model: str, spin_up: int):
         super().__init__(project_name=project_name,
-                         container_image=ModflowManifestCreator.DOCKER_IMAGE,
+                         docker_image=ModflowManifestCreator.DOCKER_IMAGE,
                          container_name=ModflowManifestCreator.CONTAINER_NAME)
         self.modflow_model = modflow_model
         self.spin_up = spin_up

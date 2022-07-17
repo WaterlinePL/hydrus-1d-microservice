@@ -7,6 +7,7 @@ metadata:
     description: {{ job_description }}
 spec:
   template:
+    ttlSecondsAfterFinished: {{ job_ttl_in_sec }}
     spec:
       volumes:
         - name: simulation-volume

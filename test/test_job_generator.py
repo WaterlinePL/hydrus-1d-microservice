@@ -100,6 +100,7 @@ class TestJobGenerator(unittest.TestCase):
             'spec': {
                 'backoffLimit': config.BACKOFF_LIMIT,
                 'template': {
+                    'ttlSecondsAfterFinished': config.JOB_TTL_IN_SEC,
                     'spec': spec
                 }
             }
