@@ -20,7 +20,7 @@ class ProjectCleanupManifestCreator(AbstractManifestCreator):
 
     def __init__(self, project_name: str):
         super().__init__(project_name=project_name,
-                         container_image=ProjectCleanupManifestCreator.DOCKER_IMAGE,
+                         docker_image=ProjectCleanupManifestCreator.DOCKER_IMAGE,
                          container_name=ProjectCleanupManifestCreator.CONTAINER_NAME)
 
     def _get_job_prefix(self) -> str:
@@ -30,7 +30,7 @@ class ProjectCleanupManifestCreator(AbstractManifestCreator):
         yaml_data = YamlData(job_prefix=self._get_job_prefix(),
                              docker_image=self.docker_image,
                              container_name=self.container_name,
-                             description=f"Cleanup job for project: {self.project_name}")
+                             description=f"Cleanup job for project {self.project_name}")
         yaml_data.set_env(ProjectCleanupManifestCreator.ENV)
         return JobManifestGenerator.prepare_kubernetes_job(yaml_data), yaml_data.job_name
 

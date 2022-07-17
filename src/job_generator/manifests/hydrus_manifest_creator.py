@@ -13,7 +13,7 @@ class HydrusManifestCreator(AbstractManifestCreator):
 
     def __init__(self, project_name: str, hydrus_model: str):
         super().__init__(project_name=project_name,
-                         container_image=HydrusManifestCreator.DOCKER_IMAGE,
+                         docker_image=HydrusManifestCreator.DOCKER_IMAGE,
                          container_name=HydrusManifestCreator.CONTAINER_NAME)
         self.hydrus_model = hydrus_model
 

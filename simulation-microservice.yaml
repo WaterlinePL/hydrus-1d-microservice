@@ -63,7 +63,11 @@ spec:
         - containerPort: 8080
         env:
         - name: NFS_PVC
-          value: simuation-nfs-pvc
+          value: simulation-nfs-pvc
+        - name: SIMULATION_NAMESPACE
+          value: hydrological-simulations
+        - name: MINIO_SECRET_NAME
+          value: <secret name>
         - name: REDIS_URL_WITH_PORT
           value: <url:port>
 ---
@@ -84,7 +88,7 @@ spec:
 kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
-  name: simuation-nfs-pvc
+  name: simulation-nfs-pvc
   namespace: hydrological-simulations
 spec:
   accessModes:

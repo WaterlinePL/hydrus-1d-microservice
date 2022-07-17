@@ -25,4 +25,5 @@ class JobManifestGenerator:
                                               task_id=data.task_id,
                                               redis_url=f"//{config.REDIS_URL}",
                                               backoff_limit=config.BACKOFF_LIMIT,
+                                              job_ttl_in_sec=config.JOB_TTL_IN_SEC,
                                               **data.extra_args))
