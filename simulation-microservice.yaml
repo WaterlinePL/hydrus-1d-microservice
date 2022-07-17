@@ -64,6 +64,8 @@ spec:
         env:
         - name: NFS_PVC
           value: simuation-nfs-pvc
+        - name: SIMULATION_NAMESPACE
+          value: hydrological-simulations
         - name: REDIS_URL_WITH_PORT
           value: <url:port>
 ---
