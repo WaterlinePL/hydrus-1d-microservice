@@ -1,4 +1,4 @@
-# Job management microservice
+# [DEPRECATED] Job management microservice
 
 This is a repository of a microservice that launches Kubernetes Jobs related to simulation flow. Jobs present in flow:
 * [Project download](https://github.com/WaterlinePL/project-download-job) - download project files in order to launch simulations (TODO: download based on .json from MinIO)
